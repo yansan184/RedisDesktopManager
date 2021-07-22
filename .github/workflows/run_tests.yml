@@ -2,11 +2,9 @@ name: Run Tests
 
 on:
   push:
-    branches:
-    - 2021
-    - play_with_ga
-  pull_request:
     branches: [ 2021 ]
+  pull_request:
+    branches: 
   workflow_dispatch:  
 
 jobs:
@@ -24,6 +22,15 @@ jobs:
       with:
         version: 5.15.2
         modules: qtcharts
+    - name: Install Cmake    
+      run: |
+          sudo apt-get update -y
+          sudo apt-get install cmake -y
+          cmake --version
+          gcc --version    
+    - name: lz4
+      run: cmake -DLZ4_BUNDLED_MODE=ON  . && make
+      working-directory: 3rdparty/lz4/build/cmake
     - name: qmake
       run: qmake
       working-directory: ./src
