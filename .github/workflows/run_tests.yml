@@ -22,7 +22,8 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v2.13.2
       with:
-        version: 5.15.2    
+        version: 5.15.2
+        modules: qtcharts
     - name: qmake
       run: qmake
       working-directory: ./src
