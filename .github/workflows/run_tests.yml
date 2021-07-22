@@ -2,9 +2,12 @@ name: Run Tests
 
 on:
   push:
-    branches: [ 2021 ]
+    branches:
+    - 2021
+    - play_with_ga
   pull_request:
     branches: [ 2021 ]
+  workflow_dispatch:  
 
 jobs:
   build:
