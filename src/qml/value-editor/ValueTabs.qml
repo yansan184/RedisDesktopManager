@@ -338,56 +338,144 @@ Repeater {
                     }
 
                     // Value editor
-                    ColumnLayout {
+                    Item {
                         id: editorWrapper
+
                         SplitView.fillWidth: true
                         SplitView.fillHeight: !isMultiRow
                         Layout.topMargin: 20
                         SplitView.minimumHeight: 220
-                        spacing: 10
 
-                        Loader {
-                            id: valueEditor
-                            objectName: "rdm_value_editor_loader"
+                        BetterDialog {
+                            id: fullScreenEditorDialog
+                            title: tabName
 
-                            Layout.topMargin: 5
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            Layout.minimumHeight: 180
+                            width: approot.width * 0.9
+                            height: approot.height * 0.9
+                            footer: null
 
-                            Component.onCompleted: {
-                                keyTab.valueEditor = valueEditor
+                            Rectangle {
+                                id: fullscreenEditorParent
+
+                                anchors.fill: parent
+                                implicitHeight: 500
+                                implicitWidth: 800
                             }
 
-                            property int currentRow: -1
+                            onClosed: {
+                                editor.state = "default"
+                            }
+                        }
 
-                            source: keyTab.keyModel? Editor.getEditorByTypeString(keyType) : ""
+                        Rectangle {
+                            id: editor
+                            anchors.fill: parent
 
-                            function loadRowValue(row) {
-                                console.log("loading row value", row)
-                                if (valueEditor.item) {
-                                    var rowValue = keyTab.keyModel.getRow(row)
-                                    valueEditor.currentRow = row
-                                    valueEditor.item.reset()
-                                    valueEditor.item.setValue(rowValue)
-                                } else {
-                                    console.log("cannot load row value - item is missing")
+                            color: sysPalette.base
+
+                            state: "default"
+
+                            states: [
+                                State {
+                                        name: "full_screen"
+                                        ParentChange { target: editor; parent: fullscreenEditorParent;}
+                                        PropertyChanges {
+                                            target: fullScreenEditorDialog
+                                            visible: true
+                                        }
+                                        PropertyChanges {
+                                            target: fullScreenModeBtn
+                                            visible: false
+                                        }
+                                    },
+                                State {
+                                    name: "default"
+                                    ParentChange { target: editor; parent: editorWrapper; }
+                                    PropertyChanges {
+                                        target: fullScreenEditorDialog
+                                        visible: false
+                                    }
+                                    PropertyChanges {
+                                        target: fullScreenModeBtn
+                                        visible: true
+                                    }
+                                }
+                            ]
+
+                            ImageButton {
+                                id: fullScreenModeBtn
+                                anchors.left: parent.left
+                                anchors.top: parent.top
+
+                                iconSource: sysPalette.base.hslLightness < 0.4 ? "qrc:/images/fullscreen_white.svg"
+                                                                               : "qrc:/images/fullscreen.svg"
+                                implicitWidth: 25
+                                implicitHeight: 25
+                                imgWidth: 15
+                                imgHeight: 15
+
+                                tooltip: qsTranslate("RDM","Full Screen Mode")
+
+                                z: 3
+
+                                onClicked: {
+                                    editor.state = editor.state == "default"? "full_screen" : "default"
+                                    editor.z = 1000
+                                    editor.forceActiveFocus()
                                 }
                             }
 
-                            function clear() {
-                                if (valueEditor.item) {
-                                    currentRow = -1
+                            ColumnLayout {
+                                id: editorLayout
+                                anchors.fill: parent
+                                anchors.margins: 5
+                                anchors.topMargin: editor.state == "default"? 20 : 5
+                                spacing: 10
 
-                                    if (valueEditor.item.keyType !== undefined) {
-                                        valueEditor.item.keyType = keyType
+                                Loader {
+                                    id: valueEditor
+                                    objectName: "rdm_value_editor_loader"
+
+                                    Layout.topMargin: 5
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    Layout.minimumHeight: 180
+
+                                    Component.onCompleted: {
+                                        keyTab.valueEditor = valueEditor
                                     }
 
-                                    valueEditor.item.reset()
+                                    property int currentRow: -1
+
+                                    source: keyTab.keyModel? Editor.getEditorByTypeString(keyType) : ""
+
+                                    function loadRowValue(row) {
+                                        console.log("loading row value", row)
+                                        if (valueEditor.item) {
+                                            var rowValue = keyTab.keyModel.getRow(row)
+                                            valueEditor.currentRow = row
+                                            valueEditor.item.reset()
+                                            valueEditor.item.setValue(rowValue)
+                                        } else {
+                                            console.log("cannot load row value - item is missing")
+                                        }
+                                    }
+
+                                    function clear() {
+                                        if (valueEditor.item) {
+                                            currentRow = -1
+
+                                            if (valueEditor.item.keyType !== undefined) {
+                                                valueEditor.item.keyType = keyType
+                                            }
+
+                                            valueEditor.item.reset()
+                                        }
+                                    }
+
+                                    onLoaded: clear()
                                 }
                             }
-
-                            onLoaded: clear()
                         }
                     }
                     // Value editor end
