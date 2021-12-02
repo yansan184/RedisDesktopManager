@@ -562,6 +562,24 @@ Item
                     }
                 }
 
+                ImageButton {
+                    id: fullScreenModeBtn
+
+                    iconSource: sysPalette.base.hslLightness < 0.4 ? "qrc:/images/fullscreen_white.svg"
+                                                                   : "qrc:/images/fullscreen.svg"
+                    implicitWidth: imgBtnWidth
+                    implicitHeight: imgBtnHeight
+                    imgWidth: imgBtnWidth * 0.8
+                    imgHeight: imgBtnHeight * 0.8
+
+                    tooltip: qsTranslate("RDM","Full Screen Mode")
+
+                    onClicked: {
+                        editor.state = editor.state === "default"? "full_screen" : "default"
+                        editor.forceActiveFocus()
+                    }
+                }
+
                 BetterButton {
                     id: saveBtn
                     objectName: "rdm_value_editor_save_btn"

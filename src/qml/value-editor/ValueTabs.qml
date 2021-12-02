@@ -400,36 +400,12 @@ Repeater {
                                         visible: true
                                     }
                                 }
-                            ]
-
-                            ImageButton {
-                                id: fullScreenModeBtn
-                                anchors.left: parent.left
-                                anchors.top: parent.top
-
-                                iconSource: sysPalette.base.hslLightness < 0.4 ? "qrc:/images/fullscreen_white.svg"
-                                                                               : "qrc:/images/fullscreen.svg"
-                                implicitWidth: 25
-                                implicitHeight: 25
-                                imgWidth: 15
-                                imgHeight: 15
-
-                                tooltip: qsTranslate("RDM","Full Screen Mode")
-
-                                z: 3
-
-                                onClicked: {
-                                    editor.state = editor.state == "default"? "full_screen" : "default"
-                                    editor.z = 1000
-                                    editor.forceActiveFocus()
-                                }
-                            }
+                            ]                            
 
                             ColumnLayout {
                                 id: editorLayout
                                 anchors.fill: parent
-                                anchors.margins: 5
-                                anchors.topMargin: editor.state == "default"? 20 : 5
+                                anchors.margins: 5                                
                                 spacing: 10
 
                                 Loader {
